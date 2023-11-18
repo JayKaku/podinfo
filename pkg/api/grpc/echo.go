@@ -2,16 +2,19 @@ package grpc
 
 import (
 	"context"
-	"log"
+
+	"go.uber.org/zap"
 
 	"github.com/stefanprodan/podinfo/pkg/api/grpc/echo"
 )
 
 type echoServer struct {
-	 echo.UnimplementedEchoServiceServer
+	echo.UnimplementedEchoServiceServer
+	config *Config
+	logger *zap.Logger
 }
 
-func (s *echoServer) Echo (ctx context.Context, message *echo.Message) (*echo.Message, error){
-	log.Printf("Received message body from client: %s", message.Body)
-	return &echo.Message {Body: message.Body}, nil
+func (s *echoServer) Echo(ctx context.Context, message *echo.Message) (*echo.Message, error) {
+	s.logger.Info("Received message body from client", zap.String("Message", message.Body))
+	return &echo.Message{Body: message.Body}, nil
 }
